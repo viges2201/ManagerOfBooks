@@ -5,13 +5,13 @@ import managerofbooks.model.Book;
 import java.util.List;
 
 public interface BookDao {
-    void addBook(Book book);
+    public void addBook(Book book);
 
-    void updateBook(Book book);
+    public void updateBook(Book book);
 
-    void removeBook(int id);
+    public void removeBook(int id);
 
-    Book getBookById(int id);
+    public Book getBookById(int id);
 
-    List<Book> listBooks();
+    public List<Book> listBooks();
 }

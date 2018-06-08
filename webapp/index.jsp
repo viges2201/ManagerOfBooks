@@ -1,4 +1,3 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--
   Created by IntelliJ IDEA.
   User: Евгений
@@ -6,6 +5,7 @@
   Time: 14:08
   To change this template use File | Settings | File Templates.
 --%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -14,5 +14,8 @@
 </head>
 <body>
 Hello
+<br/>
+<a href="<c:url value="/books"/>" target="_blank">Books list</a>
+
 </body>
 </html>

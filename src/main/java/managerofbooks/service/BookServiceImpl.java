@@ -3,8 +3,8 @@ package managerofbooks.service;
 import managerofbooks.dao.BookDao;
 import managerofbooks.model.Book;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
@@ -18,32 +18,31 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional
     public void addBook(Book book) {
-        bookDao.addBook(book);
+        this.bookDao.addBook(book);
     }
 
     @Override
     @Transactional
     public void updateBook(Book book) {
-        bookDao.updateBook(book);
+        this.bookDao.updateBook(book);
     }
 
     @Override
     @Transactional
     public void removeBook(int id) {
-        bookDao.removeBook(id);
+        this.bookDao.removeBook(id);
     }
 
     @Override
     @Transactional
     public Book getBookById(int id) {
-        Book bookById = bookDao.getBookById(id);
-        return bookById;
+        return this.bookDao.getBookById(id);
     }
 
     @Override
     @Transactional
     public List<Book> listBooks() {
-        List<Book> bookList = bookDao.listBooks();
-        return bookList;
+        return this.bookDao.listBooks();
     }
 }
+
