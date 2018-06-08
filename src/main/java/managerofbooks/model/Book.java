@@ -9,7 +9,7 @@ public class Book {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
     //title – название книги. Можно использовать тип VARCHAR(100);
     @Column(name = "title")
@@ -38,11 +38,11 @@ public class Book {
     public Book() {
     }
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -101,13 +101,13 @@ public class Book {
 
         Book book = (Book) o;
 
-        if (id != null ? !id.equals(book.id) : book.id != null) return false;
+        if (id != book.id) return false;
         return title != null ? title.equals(book.title) : book.title == null;
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
+        int result = id;
         result = 31 * result + (title != null ? title.hashCode() : 0);
         return result;
     }
