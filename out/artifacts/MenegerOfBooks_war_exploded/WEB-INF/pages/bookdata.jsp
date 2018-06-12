@@ -16,16 +16,21 @@
 <head>
     <link href="<c:url value="../../resources/css/main.css"/>" rel="stylesheet" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Book data</title>
+    <title>Книга</title>
 </head>
 <body>
+
+<a href="<c:url value="/books"/>" target="_blank">Книжная полка</a>
+
+<br>
+
 <table class="tg">
     <tr>
         <th width="80">ID</th>
         <th width="120">Title</th>
         <th width="200">Description</th>
         <th width="120">Author</th>
-        <th width="80">ISBN</th>
+        <th width="100">ISBN</th>
         <th width="80">Print year</th>
         <th width="80">Read already</th>
         <th width="60">Edit</th>

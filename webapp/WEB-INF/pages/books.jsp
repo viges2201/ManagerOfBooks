@@ -23,6 +23,15 @@
 
 <br/>
 
+<form action="${pageContext.request.contextPath}/search/">
+    <label for="id">ID:</label>
+    <input type="number" id="id" name="id" placeholder="id"/>
+    <br/>
+    <br/>
+    <input type="submit" value="Search"/>
+</form>
+<br/>
+
 <c:if test="${!empty listBooks}">
     <table class="tg">
         <tr>
@@ -30,7 +39,7 @@
             <th width="120">Title</th>
             <th width="200">Description</th>
             <th width="120">Author</th>
-            <th width="80">ISBN</th>
+            <th width="100">ISBN</th>
             <th width="80">Print year</th>
             <th width="80">Read already</th>
             <th width="60">Edit</th>
@@ -39,7 +48,7 @@
         <c:forEach items="${listBooks}" var="book">
             <tr>
                 <td>${book.id}</td>
-                <td>${book.title}</td>
+                <td><a href="/bookdata/${book.id}">${book.title}</a></td>
                 <td>${book.description}</td>
                 <td>${book.author}</td>
                 <td>${book.isbn}</td>
