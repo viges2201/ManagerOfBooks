@@ -133,7 +133,7 @@
                                                     </form:label>
                                                 </td>
                                                 <td>
-                                                    <form:input path="readAlready"/>
+                                                    <form:checkbox path="readAlready"/>
                                                 </td>
                                             </tr>
                                                 <%--Функции--%>
@@ -214,7 +214,14 @@
                                         <td>${book.author}</td>
                                         <td>${book.isbn}</td>
                                         <td>${book.printYear}</td>
-                                        <td>${book.readAlready}</td>
+                                        <td>
+                                            <c:if test="${book.readAlready == true}">
+                                                Книга прочитана
+                                            </c:if>
+                                            <c:if test="${book.readAlready == false}">
+                                                Не прочитана
+                                            </c:if>
+                                        </td>
                                         <td><a href="<c:url value='/edit/${book.id}'/>">Редактировать</a></td>
                                         <td><a href="<c:url value='/remove/${book.id}'/>">Удалить</a></td>
                                     </tr>
