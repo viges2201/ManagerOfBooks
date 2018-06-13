@@ -1,6 +1,5 @@
-.idea
-out
-target
-*.iml
-log
-*.patch
+.idea/*
+*.class
+*.war
+*.jar
+*.ear
