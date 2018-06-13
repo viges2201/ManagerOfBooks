@@ -4,13 +4,19 @@ import managerofbooks.model.Book;
 import managerofbooks.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.support.PagedListHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 public class BookController {
     private BookService bookService;
+    private static int id = 0;
 
     @Autowired(required = true)
     @Qualifier(value = "bookService")
@@ -18,49 +24,108 @@ public class BookController {
         this.bookService = bookService;
     }
 
-    @RequestMapping(value = "books", method = RequestMethod.GET)
-    public String listBooks(Model model) {
-        model.addAttribute("book", new Book());
-        model.addAttribute("listBooks", this.bookService.listBooks());
-        return "books";
+    /**
+     * Создание нового пользователя.
+     * <p>
+     * Если пользователя нет (id == 0), создаём нового. Если есть, обновляем того, что есть.
+     *
+     * @param book
+     * @return редирект в root
+     */
+    @RequestMapping(value = "book/add", method = RequestMethod.POST)
+    public String addUser(@ModelAttribute("book") Book book) {
+        if (book.getId() == 0) this.bookService.addBook(book);
+        else this.bookService.updateBook(book);
+        return "redirect:/";
     }
 
-    @RequestMapping(value = "/books/add", method = RequestMethod.POST)
-    public String addBook(@ModelAttribute("book") Book book) {
-        if (book.getId() == 0) {
-            this.bookService.addBook(book);
+    /**
+     * Удаление пользователя по ID.
+     *
+     * @param id
+     * @return редирект в root
+     */
+    @RequestMapping("/remove/{id}")
+    public String removeUser(@PathVariable("id") int id) {
+        this.bookService.removeBook(id);
+        return "redirect:/";
+    }
+
+    /**
+     * Изменение данных пользователя.
+     * <p>
+     * Метод получает id и экземпляр модели.
+     *
+     * @param id
+     * @param model
+     * @return
+     */
+    @RequestMapping("/edit/{id}")
+    public String editUser(@PathVariable("id") int id, Model model) {
+        BookController.id = this.bookService.getBookById(id).getId();
+        model.addAttribute("listBooks", this.bookService.listBooks());
+        return "redirect:/";
+    }
+
+   /* @RequestMapping("bookdata{id}")
+    public String userData(@PathVariable("id") int id, Model model) {
+        model.addAttribute("book", this.bookService.getBookById(id));
+        return "redirect:/";
+    }*/
+
+    /**
+     * Метод пейджинга.
+     * <p>
+     * Он срабатывает при запросе "/". Далее происходит следующее:
+     * В метод передаётся номер страницы и поисковый запрос в String, если он есть.
+     * Далее — если запрос есть — список наполняется только объектами User, имена которых содержат строку запроса.
+     * Если его нет — копируется основной список.
+     * <p>
+     * Список отправляется в модель, которую и возвращает метод.
+     *
+     * @param page  — номер страницы.
+     * @param title — поисковый запрос.
+     * @return модель, аттрибуты которой участвуют при наполнении списка.
+     */
+    @RequestMapping(value = "/")
+    public ModelAndView listOfUsers(@RequestParam(required = false) Integer page, @RequestParam(required = false) String title) {
+        ModelAndView modelAndView = new ModelAndView("index");
+        if (id != 0) {
+            modelAndView.addObject("book", this.bookService.getBookById(id));
+            id = 0;
         } else {
-            this.bookService.updateBook(book);
+            modelAndView.addObject("book", new Book());
         }
 
-        return "redirect:/books";
-    }
+        List<Book> books = null;
+        if (title == null) {
+            books = this.bookService.listBooks();
+        } else {
+            List<Book> tempBooks = this.bookService.listBooks();
+            books = new ArrayList<Book>();
+            for (Book tempBook : tempBooks) {
+                if (tempBook.getTitle().toLowerCase().contains(title.toLowerCase())) {
+                    System.out.println("filter: " + tempBook);
+                    books.add(tempBook);
+                }
+            }
+        }
+        PagedListHolder<Book> pagedListHolder = new PagedListHolder<Book>(books);
+        pagedListHolder.setPageSize(10);
+        modelAndView.addObject("maxPages", pagedListHolder.getPageCount());
 
-    @RequestMapping("/remove/{id}")
-    public String removeBook(@PathVariable("id") int id) {
-        this.bookService.removeBook(id);
+        if (page == null || page < 1 || page > pagedListHolder.getPageCount()) {
+            page = 1;
+        }
 
-        return "redirect:/books";
-    }
-
-    @RequestMapping("edit/{id}")
-    public String editBook(@PathVariable("id") int id, Model model) {
-        model.addAttribute("book", this.bookService.getBookById(id));
-        model.addAttribute("listBooks", this.bookService.listBooks());
-
-        return "books";
-    }
-
-    @RequestMapping("/search/")
-    public String search(@RequestParam("id") int id, Model model) {
-        model.addAttribute("book", this.bookService.getBookById(id));
-        return "bookdata";
-    }
-
-    @RequestMapping("bookdata/{id}")
-    public String bookData(@PathVariable("id") int id, Model model) {
-        model.addAttribute("book", this.bookService.getBookById(id));
-
-        return "bookdata";
+        modelAndView.addObject("page", page);
+        if (page == null || page < 1 || page > pagedListHolder.getPageCount()) {
+            pagedListHolder.setPage(0);
+            modelAndView.addObject("listBooks", pagedListHolder.getPageList());
+        } else if (page <= pagedListHolder.getPageCount()) {
+            pagedListHolder.setPage(page - 1);
+            modelAndView.addObject("listBooks", pagedListHolder.getPageList());
+        }
+        return modelAndView;
     }
 }
